@@ -2,6 +2,7 @@
 ## purpose: 
 Initiate proper configs for Waydroid 10 or 11
 Will set the following depending on what is selected:
+	
 	waydroid.active_apps=Waydroid
 	persist.waydroid.multi_windows=true
 
