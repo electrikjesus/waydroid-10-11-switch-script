@@ -3,7 +3,6 @@
 # purpose: initiate proper configs for Waydroid 10 or 11
 # Will set the following depending on what is detected:
 #		waydroid.active_apps=Waydroid
-#		persist.waydroid.multi_windows=true
 #		
 # Then it will ask if you are using Waydroid 10 or 11 and
 # make the proper anbox.conf changes for you
@@ -26,10 +25,11 @@ wd_active=""
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
   echo "purpose: "
-  echo "Initiate proper configs for Waydroid 10 or 11"
-  echo "Will set the following depending on what is selected:"
+  echo "This will override configs for Waydroid (10/11) by editing"
+  echo "the waydroid_base.prop found in /var/lib/waydroid/"
+  echo ""
+  echo "This will set the following depending on what is selected:"
   echo "	waydroid.active_apps=Waydroid"
-  echo "	persist.waydroid.multi_windows=true"
   echo ""
   echo "Then it will ask if you are using Waydroid 10 or 11 and"
   echo "make the proper anbox.conf changes for you"
@@ -49,38 +49,26 @@ if [ "$isMutter" != "" ]; then
 	I=0
 	for LN in $(cat $FILENAME)
 	do
-		if [ "$LN" == "persist.waydroid.multi_windows=true" ]; then
-			echo "multiwindow detected :)"
-			multi_windows="true"
-		fi
 		if [ "$LN" == "waydroid.active_apps=Waydroid" ]; then
 			echo "waydroid active detected :)"
 			wd_active="true"
 		fi
 	done
-	if [ "$multi_windows" != "true" ]; then
-			read -p "Do you want to use multiwindow (y/n)?" choice
-			case "$choice" in 
-			  y|Y ) echo "yes" && echo "persist.waydroid.multi_windows=true" >> /var/lib/waydroid/waydroid_base.prop;;
-			  n|N ) echo "no" && echo "persist.waydroid.multi_windows=false" >> /var/lib/waydroid/waydroid_base.prop;;
-			  * ) echo "invalid";;
-			esac
+
+	if [ "$wd_active" ]; then
+		read -p "active mode found. Do you want to disable it (y/n)?" choice
+		case "$choice" in 
+		  y|Y ) echo "yes" && sed -i '/waydroid.active_apps=Waydroid/d' /var/lib/waydroid/waydroid_base.prop;;
+		  n|N ) echo "no";;
+		  * ) echo "invalid";;
+		esac
 	else
-		if [ "$wd_active" ]; then
-			read -p "active mode found. Do you want to disable it (y/n)?" choice
-			case "$choice" in 
-			  y|Y ) echo "yes" && sed -i '/waydroid.active_apps=Waydroid/d' /var/lib/waydroid/waydroid_base.prop;;
-			  n|N ) echo "no";;
-			  * ) echo "invalid";;
-			esac
-		else
-			read -p "Active mode not found. Do you want to enable 'waydroid active' mode (y/n)?" choice
-			case "$choice" in 
-			  y|Y ) echo "yes" && echo "waydroid.active_apps=Waydroid" >> /var/lib/waydroid/waydroid_base.prop;;
-			  n|N ) echo "no";;
-			  * ) echo "invalid";;
-			esac
-		fi
+		read -p "Active mode not found. Do you want to enable 'waydroid active' mode (y/n)?" choice
+		case "$choice" in 
+		  y|Y ) echo "yes" && echo "waydroid.active_apps=Waydroid" >> /var/lib/waydroid/waydroid_base.prop;;
+		  n|N ) echo "no";;
+		  * ) echo "invalid";;
+		esac
 	fi
 	
 fi
