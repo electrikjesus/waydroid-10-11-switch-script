@@ -76,3 +76,5 @@ case "$choice" in
   11 ) echo "11" && sudo sed -i 's/aidl2/aidl3/' /etc/gbinder.d/anbox.conf && sudo sed -i 's/29/30/' /etc/gbinder.d/anbox.conf;;
   * ) echo "invalid";;
 esac
+
+echo "All Set. Thanks for using!"
