@@ -43,35 +43,32 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
   exit 0
 fi
 
-if [ "$isMutter" != "" ]; then
-	echo "mutter detected"
-	FILENAME='/var/lib/waydroid/waydroid_base.prop'
-	I=0
-	for LN in $(cat $FILENAME)
-	do
-		if [ "$LN" == "waydroid.active_apps=Waydroid" ]; then
-			echo "waydroid active detected :)"
-			wd_active="true"
-		fi
-	done
-
-	if [ "$wd_active" ]; then
-		read -p "active mode found. Do you want to disable it (y/n)?" choice
-		case "$choice" in 
-		  y|Y ) echo "yes" && sed -i '/waydroid.active_apps=Waydroid/d' /var/lib/waydroid/waydroid_base.prop;;
-		  n|N ) echo "no";;
-		  * ) echo "invalid";;
-		esac
-	else
-		read -p "Active mode not found. Do you want to enable 'waydroid active' mode (y/n)?" choice
-		case "$choice" in 
-		  y|Y ) echo "yes" && echo "waydroid.active_apps=Waydroid" >> /var/lib/waydroid/waydroid_base.prop;;
-		  n|N ) echo "no";;
-		  * ) echo "invalid";;
-		esac
+FILENAME='/var/lib/waydroid/waydroid_base.prop'
+I=0
+for LN in $(cat $FILENAME)
+do
+	if [ "$LN" == "waydroid.active_apps=Waydroid" ]; then
+		echo "waydroid active detected :)"
+		wd_active="true"
 	fi
-	
+done
+
+if [ "$wd_active" ]; then
+	read -p "active mode found. Do you want to disable it (y/n)?" choice
+	case "$choice" in 
+	  y|Y ) echo "yes" && sed -i '/waydroid.active_apps=Waydroid/d' /var/lib/waydroid/waydroid_base.prop;;
+	  n|N ) echo "no";;
+	  * ) echo "invalid";;
+	esac
+else
+	read -p "Active mode not found. Do you want to enable 'waydroid active' mode (y/n)?" choice
+	case "$choice" in 
+	  y|Y ) echo "yes" && echo "waydroid.active_apps=Waydroid" >> /var/lib/waydroid/waydroid_base.prop;;
+	  n|N ) echo "no";;
+	  * ) echo "invalid";;
+	esac
 fi
+
 
 read -p "Is this an Android 10 or Android 11 image (10/11)?" choice
 case "$choice" in 
